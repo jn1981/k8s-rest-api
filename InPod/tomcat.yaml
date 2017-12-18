@@ -1,0 +1,56 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "2"
+  labels:
+    run: my-tomcat2
+  name: my-tomcat2
+  namespace: cloud
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: my-tomcat2
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        run: my-tomcat2
+    spec:
+      containers:
+      - image: tomcat:latest
+        imagePullPolicy: IfNotPresent
+        name: my-tomcat2
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        resources: {}
+      restartPolicy: Always
+      securityContext: {}
+      serviceAccount: admin
+      serviceAccountName: admin
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    run: my-tomcat2
+  name: my-tomcat2
+  namespace: cloud
+spec:
+  ports:
+  - nodePort: 30099
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    run: my-tomcat2
+  type: NodePort
+

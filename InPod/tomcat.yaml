@@ -30,7 +30,13 @@ spec:
         ports:
         - containerPort: 8080
           protocol: TCP
-        resources: {}
+        resources:
+          requests:
+            cpu: 50m
+            memory: 100Mi
+          limits:
+            cpu: 100m
+            memory: 200Mi 
       restartPolicy: Always
       securityContext: {}
       serviceAccount: admin
